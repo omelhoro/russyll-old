@@ -1,11 +1,10 @@
-(ns orphoep
- (:require [clojure.string]#+clj [clojure.data.json :as json] 
-           #+cljs [goog.net.XhrIo])
+(ns russyll.orphoep
+  (:require [clojure.data.json :as json])
   )
 (def stress-sign "*")
+(defn ss [word] (format word stress-sign))
 (def -- clojure.string/replace)
 (def ++ clojure.string/join)
-#+cljs (enable-console-print!)
 
 (defn replace-patt [val [pat rep]] 
   (if (list? pat) 
@@ -13,19 +12,12 @@
   (-- val pat rep)))
 
 (def unpal-e-test '("шт*ейгер" "брет*елька" "модерн" "денди"  "дельта"))    
-#+clj (def e-dict (with-open [in-file (clojure.java.io/reader (clojure.java.io/resource "data/e_rep.json"))]
-                   (doall
-                     (json/read in-file))))    
-#+cljs (def e-dict ;{:a \e}) 
-         (let [url "/static/syllable/e_rep.json"
-          callback (fn [reply] (let [v (js->clj (.getResponseJson (.-target reply))) ] ;v is a Clojure data structure
-                                 (do (def e-dict v) e-dict)))]
-          (.send goog.net.XhrIo url callback)))
-
-;#+cljs(e-dict-fn)
+(def e-dict (with-open [in-file (clojure.java.io/reader (clojure.java.io/resource "data/e_rep.json"))]
+             (doall
+               (json/read in-file))))    
 (defn unpal-e [word & [lemma]] 
   (let [
-        strd-ix (.indexOf word stress-sign) 
+        strd-ix (.indexOf word stress-sign)
         word-unstrd (-- word stress-sign "")  
         lemma (if (= lemma nil ) word-unstrd lemma) 
         patts (get e-dict lemma [])
@@ -33,8 +25,10 @@
         ]
     (if (>= strd-ix 0) (str (.substring repld 0 strd-ix) stress-sign (.substring repld strd-ix)) repld
 )))
- 
-(def hp-test '("солнце" "сердце" "раздница" "честный"))
+
+(map unpal-e unpal-e-test)
+
+(def hp-test '("солнце" "сердце" "раздница" "честный")) 
 (def hard-pron-patts 
         '(("стн" "сн")
          ("здн" "зн")
@@ -56,12 +50,13 @@
 (defn hard-pron [word]
   (reduce 
     replace-patt word hard-pron-patts ))
+(map hard-pron hp-test)
 
 (def cluster-assim-test '("легко" "мягко" "считать"))
 (def cluster-assim-patts
         '((("сш" "зш") "шш")
          (("сж" "зж") "жж") 
-         (("сч" "зч" "сщ" "жч") "щ") 
+         (("сч" "зч" "сщ" "жч") "щ")
          (("тч" "дч") "чч")
          (("тщ" "дщ") "чщ")
          (("гки") "хьки")
@@ -69,6 +64,8 @@
          (("хг") "г")
        ))
 (defn cluster-assim [word] (reduce replace-patt word cluster-assim-patts))
+(map cluster-assim cluster-assim-test )
+
 (def reg-assim {
                            "к" "г"
                            "г" "к"
@@ -108,10 +105,10 @@
     (++ (devoice word (vd-cons  lt)))
     (++ word))))
 
-;(map clojure.string/join (map end-assim end-assim-test))
+(map clojure.string/join (map end-assim end-assim-test))
 
 
-(def reg-assim-pat (re-pattern (++ ["[" cons-2 "]{2,}" ])))
+(def reg-assim-pat (re-pattern (format "[%s]{2,}" cons-2)))
 (defn deassim-con [con modus] 
   (let [new-modus (if (= modus "") 
                     (cond (vl-cons con) "vl" (vd-cons con) "vd" :else "") 
@@ -142,7 +139,7 @@
 (def reg-pal-pat (re-pattern "(ст|зд|сд|нд|нч|нт|нс|нз)\\**[юеяьиё]"))
 (defn reg-pal [word]
   (-- word reg-pal-pat #(str (first(first %1)) \ь (.substring (first %1) 1 ))))
-;(map reg-pal reg-pal-test)
+(map reg-pal reg-pal-test)
 
 
 
@@ -161,7 +158,7 @@
     ;  word)
     word
     (repfn word)))) 
-;(map ogo-ovo ogo-ovo-test)
+(map ogo-ovo ogo-ovo-test)
 
 (defn chto-trans [word] 
   (let [isstressed (not= -1 (.indexOf word "*"))]
@@ -187,13 +184,16 @@
 
 (defn dubcon [word]
   (-- word dubcon-pat (partial dubcon-alg word))) 
-;(dubcon "аккуратный")
+(dubcon "аккуратный")
 
 (def dubcon-test ["грамм" "русский" "аккуратный" "коммунист" "рассада"])
-;(map dubcon dubcon-test)
+(map dubcon dubcon-test)
 
 (def fns [hard-pron unpal-e cluster-assim end-assim reg-assim-repl reg-pal ogo-ovo chto-trans dash-rep dubcon])
 
-(defn ^:export orpho-single [word]
+(defn orpho-single [word]
   (reduce #(%2 %1) word fns))
 
+(defn orpho-json [string]
+  (let [d (json/read-str string)]
+    (println (json/write-str (into {} (for [k d] [k (orpho-single k)]))))))

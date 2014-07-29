@@ -3,6 +3,8 @@ pom.xml
 /lib/
 /classes/
 /out/
+/static/syllable/out/
+/bin/
 /target/
 .lein-deps-sum
 .lein-repl-history

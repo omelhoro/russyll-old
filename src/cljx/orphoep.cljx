@@ -1,6 +1,8 @@
 (ns orphoep
- (:require [clojure.string]#+clj [clojure.data.json :as json] 
-           #+cljs [goog.net.XhrIo])
+ (:require [clojure.string] 
+           #+clj [clojure.data.json :as json] 
+           #+cljs [goog.net.XhrIo]
+           )
   )
 (def stress-sign "*")
 (def -- clojure.string/replace)
@@ -22,7 +24,6 @@
                                  (do (def e-dict v) e-dict)))]
           (.send goog.net.XhrIo url callback)))
 
-;#+cljs(e-dict-fn)
 (defn unpal-e [word & [lemma]] 
   (let [
         strd-ix (.indexOf word stress-sign) 
@@ -84,14 +85,9 @@
                            })
 
 (def cons-2  "лмнрцкгзвпджчшстбьъ")
-(defn vd-cons 
-  ([] (set  "бдгжвз"))
-  ([itm] (contains? (set  "бдгжвз") itm))
-  )
+(def vd-cons (set  "бдгжвз")) 
 (def neutral-cons (set "рнмл"))
-(defn vl-cons 
-  ([] (set "пткшфс"))
-  ([itm] (contains? (set "пткшфс") itm)))
+(def vl-cons (set "пткшфс")) 
 
 (defn devoice [word islast]  
   (let [pos (if islast (dec (count word)) (- (count word) 2))]

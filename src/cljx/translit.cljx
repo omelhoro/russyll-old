@@ -1,8 +1,9 @@
 (ns translit
   (:require [globals :as globals])
-  (:use [orphoep :only [++ --]] ))
-#+cljs (enable-console-print!)
+  (:use [orphoep :only [++ --]] )
+  )
 
+#+cljs (enable-console-print!)
 
 (def palat-pat 
   (re-pattern (globals/sformat "[%s](?=\\**[%s])"  (++ (clojure.set/difference globals/rus-cons (set "жцшчщ"))) (++ globals/pals-vows))))

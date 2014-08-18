@@ -1,6 +1,6 @@
 (ns main
  ;(:require [goog.net.XhrIo :as net] )
- (:require [goog.net.XhrIo])
+ (:require [goog.net.XhrIo] [clojure.browser.repl :as repl])
   (:use 
     [globals :only [sformat]]
     [syllab :only [syll-single]]
@@ -9,6 +9,10 @@
     [domina.css :only [sel]] 
     [domina.events :only [dispatch! listen!]] 
     [domina :only [set-text! text html-to-dom append! value children text destroy-children!]]))
+
+; Use of "localhost" will only work for local development.
+; Change the port to match the :repl-listen-port.
+;(repl/connect "http://localhost:9000/repl")
 
 (enable-console-print!)
 (defn syllaby [word]
@@ -31,6 +35,7 @@
   (let [stress-sign (value inp-stress-sign)
         regex-s (re-pattern (-- "[.,;:'\"!? ]" stress-sign ""))
         single-word (value word-field)
+        syllaby (memoize syllaby)
         ]
   (if (= "" single-word)
     (dorun (map #(add-to-table (syllaby (-- % stress-sign "*"))) (filter not-empty (.split (text sample-text) regex-s))))
@@ -48,6 +53,7 @@
     (listen! (sel ".reset") :click reset)
   )
 (-main)
+
 
 ;(println (.split foos (re-pattern " ")))
 ;(dorun (map #(add-to-table (syllaby %)) (filter not-empty (.split foos #"[.,;:'\"!?\n ]"))))

@@ -4,7 +4,8 @@
   (:gen-class))
 
 (defn syll-json [string]
- (let [d (json/read-str string)]
+ (let [d (json/read-str string)
+       syll-single (memoize syll-single)]
    (println (json/write-str (into {} (for [k d] [k (syll-single k)]))))))
 
 (defn orpho-json [string]

@@ -1,6 +1,5 @@
 pom.xml
 *jar
-*.js
 *map
 /lib/
 /classes/

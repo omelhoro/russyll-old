@@ -1,4 +1,4 @@
-(ns orphoep
+/(ns orphoep
  (:require [clojure.string] 
            #+clj [clojure.data.json :as json] 
            #+cljs [goog.net.XhrIo]
@@ -19,7 +19,7 @@
                    (doall
                      (json/read in-file))))    
 #+cljs (def e-dict ;{:a \e}) 
-         (let [url "/static/syllable/e_rep.json"
+         (let [url "./static/e_rep.json"
           callback (fn [reply] (let [v (js->clj (.getResponseJson (.-target reply))) ] ;v is a Clojure data structure
                                  (do (def e-dict v) e-dict)))]
           (.send goog.net.XhrIo url callback)))

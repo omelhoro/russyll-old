@@ -20,10 +20,10 @@ java -jar russyll-0.1.0-SNAPSHOT-standalone.jar
 Type into terminal the word you want to translate. Reads on standard input.
 Accepts Json-String or one word-lines
 
-The other option is the index.html file. You should run a server - no one is included, because I use Pythons SimpleHTTPServer.
+The other option is the index.html file. Ring and compojure are used as server.
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014 Igor Fischer
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.

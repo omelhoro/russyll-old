@@ -10,7 +10,7 @@
                       (doall
                         (json/read in-file)))) 
 #+cljs (def sm4-dict ; {:a {:b 1}})     
-         (let [url "/static/syllable/kemp_data_on_rep.json"
+         (let [url "/static/kemp_data_on_rep.json"
            callback (fn [reply] (let [v (js->clj (.getResponseJson (.-target reply)))] ;v is a Clojure data structure
                                     (do (def sm4-dict v) sm4-dict)))]
            (.send goog.net.XhrIo url callback)))

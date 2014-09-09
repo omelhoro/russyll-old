@@ -12,10 +12,6 @@
   (every? true? (map 
                   (fn [[start end]] 
                     (is (= (f start) end))) (filter (fn [[st e]] (not= \% (first st))) v))))
-(deftest sm4-t
-  (let [d (testset "sm4_test")]
-  (testing "The Kempgen model (SM 4)"
-       (every-true d (partial syll-single-sys sm4)))))
 
 (deftest sm1-t
   (let [d (testset "sm1_test")]
@@ -31,6 +27,11 @@
   (let [d (testset "sm3_test")]
   (testing "The Bondarko model (SM 3)"
        (every-true d (partial syll-single-sys sm3)))))
+
+(deftest sm4-t
+  (let [d (testset "sm4_test")]
+  (testing "The Kempgen model (SM 4)"
+       (every-true d (partial syll-single-sys sm4)))))
 
 (deftest sm5-t
   (let [d (testset "sm5_test")]

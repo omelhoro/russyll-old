@@ -38,7 +38,7 @@
         syllaby (memoize syllaby)
         ]
   (if (= "" single-word)
-    (dorun (map #(add-to-table (syllaby (-- % stress-sign "*"))) (filter not-empty (.split (text sample-text) regex-s))))
+    (dorun (map #(add-to-table (syllaby (-- % stress-sign "*"))) (filter not-empty (.split (value sample-text) regex-s))))
     (add-to-table (syllaby (-- single-word stress-sign "*"))))))
 
 (defn reset [evt]

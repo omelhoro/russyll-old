@@ -37357,7 +37357,7 @@ goog.require("globals");
 goog.require("orphoep");
 cljs.core.enable_console_print_BANG_.call(null);
 syllab.sm4_dict = function() {
-  var url = "/static/kemp_data_on_rep.json";
+  var url = "./static/kemp_data_on_rep.json";
   var callback = function(url) {
     return function(reply) {
       var v = cljs.core.js__GT_clj.call(null, reply.target.getResponseJson());

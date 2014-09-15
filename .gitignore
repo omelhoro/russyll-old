@@ -8,6 +8,7 @@ pom.xml
 /static/syllable/out/
 /bin/
 /target/
+.nrepl-port
 .lein-deps-sum
 .lein-repl-history
 .lein-plugins/

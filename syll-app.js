@@ -40404,6 +40404,7 @@ goog.require("syllab");
 goog.require("domina");
 goog.require("domina.events");
 goog.require("domina.css");
+goog.require("domina");
 goog.require("globals");
 goog.require("goog.net.XhrIo");
 goog.require("clojure.browser.repl");
@@ -40439,8 +40440,8 @@ main.syllaby_words = function syllaby_words(evt) {
   var syllaby = cljs.core.memoize.call(null, main.syllaby);
   if (cljs.core._EQ_.call(null, "", single_word)) {
     return cljs.core.dorun.call(null, cljs.core.map.call(null, function(stress_sign, regex_s, single_word, syllaby) {
-      return function(p1__5289_SHARP_) {
-        return main.add_to_table.call(null, syllaby.call(null, orphoep.__.call(null, p1__5289_SHARP_, stress_sign, "*")));
+      return function(p1__7269_SHARP_) {
+        return main.add_to_table.call(null, syllaby.call(null, orphoep.__.call(null, p1__7269_SHARP_, stress_sign, "*")));
       };
     }(stress_sign, regex_s, single_word, syllaby), cljs.core.filter.call(null, cljs.core.not_empty, domina.value.call(null, main.sample_text).split(regex_s))));
   } else {
@@ -40454,9 +40455,27 @@ main.reset = function reset(evt) {
 setTimeout(function() {
   return domina.events.dispatch_BANG_.call(null, domina.css.sel.call(null, ".syllab"), new cljs.core.Keyword(null, "click", "click", 1912301393), cljs.core.PersistentArrayMap.EMPTY);
 }, 1500);
+main.tabs = domina.css.sel.call(null, "li \x3e a");
+main.tabs_div = domina.nodes.call(null, domina.css.sel.call(null, ".tab-content \x3e div"));
+main.tab_change = function tab_change(evt) {
+  var href = domina.attr.call(null, domina.events.current_target.call(null, evt), "href");
+  cljs.core.dorun.call(null, cljs.core.map.call(null, function(href) {
+    return function(p1__7270_SHARP_) {
+      return domina.remove_class_BANG_.call(null, p1__7270_SHARP_.parentNode, "active");
+    };
+  }(href), domina.nodes.call(null, main.tabs)));
+  domina.add_class_BANG_.call(null, domina.events.current_target.call(null, evt).parentNode, "active");
+  cljs.core.dorun.call(null, cljs.core.map.call(null, function(href) {
+    return function(p1__7271_SHARP_) {
+      return domina.remove_class_BANG_.call(null, p1__7271_SHARP_, "active");
+    };
+  }(href), main.tabs_div));
+  return domina.add_class_BANG_.call(null, domina.css.sel.call(null, href), "active");
+};
 main._main = function _main() {
   domina.events.listen_BANG_.call(null, domina.css.sel.call(null, ".syllab"), new cljs.core.Keyword(null, "click", "click", 1912301393), main.syllaby_words);
-  return domina.events.listen_BANG_.call(null, domina.css.sel.call(null, ".reset"), new cljs.core.Keyword(null, "click", "click", 1912301393), main.reset);
+  domina.events.listen_BANG_.call(null, domina.css.sel.call(null, ".reset"), new cljs.core.Keyword(null, "click", "click", 1912301393), main.reset);
+  return domina.events.listen_BANG_.call(null, main.tabs, new cljs.core.Keyword(null, "click", "click", 1912301393), main.tab_change);
 };
 main._main.call(null);
 

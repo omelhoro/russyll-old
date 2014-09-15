@@ -1,14 +1,15 @@
 (ns main
  ;(:require [goog.net.XhrIo :as net] )
- (:require [goog.net.XhrIo] [clojure.browser.repl :as repl])
+ (:require [goog.net.XhrIo] [clojure.browser.repl :as repl] [domina :as dom])
   (:use 
     [globals :only [sformat]]
     [syllab :only [syll-single]]
     [orphoep :only [orpho-single ++ --]]
     [translit :only [translit]]
     [domina.css :only [sel]] 
-    [domina.events :only [dispatch! listen!]] 
-    [domina :only [set-text! text html-to-dom append! value children text destroy-children!]]))
+    [domina.events :only [dispatch! current-target listen!]] 
+    [domina :only [attr add-class! set-text! text html-to-dom append! value children text destroy-children!]]))
+
 
 ; Use of "localhost" will only work for local development.
 ; Change the port to match the :repl-listen-port.
@@ -22,7 +23,9 @@
     (do (dorun (map-indexed (fn [i w] 
                    (let [td (html-to-dom (sformat "<td class='sm%d'></td>" i))] 
                      (append! row (set-text! td w)))) sylls)) row)))
-
+;TODO: implement warnings (stress, lemmas)
+;TODO: options like auto stress, sampa,palat
+;TODO: google stats
 
 (def word-field (sel ".syll-word"))
 (def tab-field (sel ".syll-content"))
@@ -46,14 +49,26 @@
   ( destroy-children! childs)))
 
 (js/setTimeout #(dispatch! (sel ".syllab") :click {}) 1500 )
-  
+
+;tabs
+(def tabs (sel "li > a"))
+(def tabs-div (dom/nodes (sel ".tab-content > div")))
+
+(defn tab-change [evt]
+  (let [href (dom/attr (current-target evt) "href")]
+  (do (dorun (map #(dom/remove-class! (.-parentNode %) "active") (dom/nodes tabs)))
+  (dom/add-class! (.-parentNode (current-target evt)) "active")
+  (dorun (map #(do  (dom/remove-class! % "active")) tabs-div))
+  (dom/add-class! (sel href) "active"))))
+
 (defn -main []
   (do 
     (listen! (sel ".syllab") :click syllaby-words))
     (listen! (sel ".reset") :click reset)
+    (listen! tabs :click tab-change)
   )
-(-main)
 
+(-main)
 
 ;(println (.split foos (re-pattern " ")))
 ;(dorun (map #(add-to-table (syllaby %)) (filter not-empty (.split foos #"[.,;:'\"!?\n ]"))))

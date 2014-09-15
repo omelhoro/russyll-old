@@ -37,7 +37,7 @@
 
   :aliases {  "clj-test" ["with-profile","clj", "test"]
             "clj-build" ["with-profile","clj", "uberjar"]
-            "cljs-build" ["with-profile","cljs", "cljsbuild","once"]
+            "cljs-build" ["with-profile","cljs", "cljsbuild","auto"]
             "cljs-serve" ["with-profile","cljs", "ring","server"]
             }
 

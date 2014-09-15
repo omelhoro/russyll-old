@@ -1,5 +1,4 @@
 (ns main
- ;(:require [goog.net.XhrIo :as net] )
  (:require [goog.net.XhrIo] [clojure.browser.repl :as repl] [domina :as dom])
   (:use 
     [globals :only [sformat]]
@@ -16,13 +15,13 @@
 ;(repl/connect "http://localhost:9000/repl")
 
 (enable-console-print!)
-(defn syllaby [word]
-  (let [
-        sylls (syll-single word)
-        row (html-to-dom (sformat "<tr class='syll-row'><td class='lemma'>%s</td></tr>" word))]
+(defn render-tablerow [word paradigm]
+  (let [row (html-to-dom (sformat "<tr class='syll-row'><td class='lemma'>%s</td></tr>" word))]
     (do (dorun (map-indexed (fn [i w] 
                    (let [td (html-to-dom (sformat "<td class='sm%d'></td>" i))] 
-                     (append! row (set-text! td w)))) sylls)) row)))
+                     (append! row (set-text! td w)))) paradigm)) row)))
+
+(def ru-vows (re-pattern "[`иеаоуяюыёэ]"))
 ;TODO: implement warnings (stress, lemmas)
 ;TODO: options like auto stress, sampa,palat
 ;TODO: google stats
@@ -33,16 +32,29 @@
 (def sample-text (sel ".sample-text"))
 
 (defn add-to-table [tr] (append! tab-field  tr))
+(defn set-of-vals [t]
+  (into {} (map #(vector % (syll-single %)) (set t))))
 
 (defn syllaby-words [evt]
   (let [stress-sign (value inp-stress-sign)
-        regex-s (re-pattern (-- "[.,;:'\"!? ]" stress-sign ""))
-        single-word (value word-field)
-        syllaby (memoize syllaby)
+        regex-s (re-pattern (-- "([.,;:'\"!? ])" stress-sign ""))
+        single-word (-- (value word-field) stress-sign "*")
+        splitted-t (.split (-- (value sample-text) stress-sign "*") regex-s)
+        map-words (set-of-vals splitted-t)
+        text-fn (fn [evt]
+                  (let [model (value (sel "select[name='syl-model']"))]
+                  (dom/set-text! (sel "#text-of-syls") (++ (map 
+                                                             #(let [r (map-words % %)] (if (seq? r) (nth r (int model)) r)) 
+                                                             splitted-t)))))
+        model-select (sel "select[name='syl-model']") 
         ]
   (if (= "" single-word)
-    (dorun (map #(add-to-table (syllaby (-- % stress-sign "*"))) (filter not-empty (.split (value sample-text) regex-s))))
-    (add-to-table (syllaby (-- single-word stress-sign "*"))))))
+    (do (dorun (map 
+             #(add-to-table (render-tablerow (key %) (val %))) 
+             map-words))
+        (listen! model-select  :click text-fn)
+        (dispatch! model-select :click {}))
+    (add-to-table (render-tablerow single-word (syll-single single-word))))))
 
 (defn reset [evt]
   (let [childs (sel ".syll-content")]

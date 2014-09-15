@@ -21,7 +21,7 @@ body{
 				Follow the development <a href='https://github.com/omelhoro/russyll'>here</a>.
 
 				</p>
-				<textarea class='form-control sample-text' cols=60 rows="5" >
+				<textarea class='form-control sample-text' width=100% rows="6" >
 На вокз'але Никол'аевской жел'езной дор'оги встр'етились дв'а при'ятеля: од'ин т'олстый, друг'ой т'онкий. Т'олстый т'олько что пооб'едал на вокз'але, и г'убы ег'о, подёрнутые м'аслом, лосн'ились, как сп'елые в'ишни. П'ахло от нег'о х'ересом и флёр-д’ор'анжем. Т'онкий же т'олько что в'ышел из ваг'она и б'ыл навь'ючен чемод'анами, узл'ами и карт'онками. П'ахло от нег'о ветчин'ой и коф'ейной г'ущей. 'Из-за ег'о спин'ы выгл'ядывала х'уденькая ж'енщина с дл'инным подбор'одком - ег'о жен'а, и выс'окий гимназ'ист с прищ'уренным гл'азом - ег'о с'ын.
 
 - Порф'ирий! - воскл'икнул т'олстый, ув'идев т'онкого. - Т'ы ли 'это? Гол'убчик м'ой! Ск'олько з'им, ск'олько л'ет!
@@ -50,13 +50,14 @@ body{
 				</div>
 				</div>
 <ul class="nav nav-tabs" role="tablist">
-  <li class="active"><a href="#table" role="tab" data-toggle="tab">Table</a></li>
-  <li><a href="#text" role="tab" data-toggle="tab">Text</a></li>
+  <li class=""><a href="#table" role="tab" data-toggle="tab">Table</a></li>
+  <li class='active'><a href="#text" role="tab" data-toggle="tab">Text</a></li>
   <li><a href="#stats" role="tab" data-toggle="tab">Stats</a></li>
 </ul>
 
             <div class='tab-content'>
-                <div id='table' class='tab-pane active'>
+                <div id='table' class='tab-pane'>
+                    You view a <strong>set</strong>, so a word is not syllabized two times.
                 <table class='table table-hover table-syll'>
 				<tr>
 					<th></th>
@@ -69,9 +70,18 @@ body{
 				<tbody class='syll-content'></tbody>
 			</table>
         </div>
-        <div id='text' class='tab-pane'>
-            <textarea class='form-control'>Set model</textarea>
+
+        <div id='text' class='tab-pane active'>
+            <select name='syl-model'>
+                <option value=0>SM1
+                <option value=1>SM2
+                <option value=2>SM3
+                <option value=3>SM4
+                <option value=4>SM5
+                </select>
+            <textarea id='text-of-syls' class='form-control' width=100% rows=10>Set model</textarea>
         </div>
+
         <div id='stats' class='tab-pane'>
             <div id='chart_div'>Chart coming soon</div>
         </div>

@@ -1,39 +1,55 @@
 (ns syllab
-  (:require 
+  (:require [clojure.string :as str] 
            #+clj [clojure.data.json :as json])
   (:use [orphoep :only [++ -- orpho-single]] 
         [globals :only [sformat]]
         [translit :only [translit]]))
 #+cljs (enable-console-print!)
 
+(def concluster-pat (let 
+                      [
+                       vow-bef-with (sformat "(\\**[%s])" (++ globals/all-vows)) 
+                       non-vows (sformat "([^%s*-]+)"  (++ globals/all-vows))
+                       vow-after (sformat "(?=[%s*-])" (++ globals/all-vows))
+                       merged (++ [vow-bef-with non-vows vow-after])
+                       ]
+(do (println merged)  
+                        [merged (re-pattern merged) ])))
+
+(def vowcluster-pat (let [
+                 vow   (sformat "[%s]" (++ globals/all-vows))
+                vow-aft (sformat "(?=\\*?[%s])" (++ globals/all-vows))
+                merged (++ [vow vow-aft])
+                ]
+                      (do (println merged)
+  (re-pattern merged ))))
+
 #+clj  (def sm4-dict (with-open [in-file (clojure.java.io/reader (clojure.java.io/resource "data/kemp_data_on_rep.json"))]
                       (doall
                         (json/read in-file)))) 
 #+cljs (def sm4-dict ; {:a {:b 1}})     
-         (let [url "./static/kemp_data_on_rep.json"
+         (let [url "/static/kemp_data_on_rep.json"
            callback (fn [reply] (let [v (js->clj (.getResponseJson (.-target reply)))] ;v is a Clojure data structure
                                     (do (def sm4-dict v) sm4-dict)))]
            (.send goog.net.XhrIo url callback)))
 
-(defn sm1 [vm cm] 
-  (if (or (= 1 (count cm)) 
-          (or (not= (first vm) \*) 
-          (and (= 2 (count cm)) (= (first vm) \*) (contains? (set "рРлЛй") (second cm)))))
-    [vm "-" cm]
-    [vm (first cm) "-" (++ (rest cm))]))
+(defn sm1 [comp-m [v c]]
+  (let [is-stressed (= \* (first v))]
+  (if (or (not is-stressed)
+          (and (= 2 (count c)) is-stressed (contains? (set "рРлЛй") (second c))))
+    [v "-" c]
+    [v (first c) "-" (++ (rest c))])))
 
-(defn sm2 [vm cm] 
-    (if (= (count cm) 1)
-      [vm "-" cm]
+(defn sm2 [comp-m [v c]]
       (cond 
-        (and (= 2 (count cm)) (= cm "рш")) [vm cm \-]
-        (every? #(contains? globals/rus-sons  %) cm) [vm \- cm] 
-        (and (contains? globals/rus-sons (first cm))
-                        (not (contains? globals/rus-sons (second cm)))) [vm (str (first cm)) \- (++ (rest cm))]
-        :else [vm \- cm])))
+        (and (= 2 (count c)) (= c "рш")) [v c \-]
+        (every? #(contains? globals/rus-sons  %) c) [v \- c] 
+        (and (contains? globals/rus-sons (first c))
+                        (not (contains? globals/rus-sons (second c)))) [v (str (first c)) \- (++ (rest c))]
+        :else [v \- c]))
 
-(defn sm3 [vm cm]
-    [vm "-" cm])
+(defn sm3 [comp-m [v c]]
+    [v "-" c])
  
 (defn sm4-check-concl [c o]
   (let [last-let (str (last c))
@@ -44,65 +60,54 @@
     [(++ o) \- (++ c)]
   ( sm4-check-concl (rest c) (conj o (first c)))))))
   
-(defn sm4 [vm cm]
-    (if (= (count cm) 1) 
-      [vm \- cm]
-      [vm (++ (sm4-check-concl cm []))]))
+(defn sm4 [comp-m [v c]]
+      [v (++ (sm4-check-concl c []))])
+
 
 (def son-scale
   (apply merge (map-indexed #(into {} (for [c %2] [c %1])) ["птк" "бдг" "чц" "сфшщх" "звж" "мн"  "л" "р" "й"])))
 
-(defn sm5 [vm cm]
-  (let [ 
-        son-vals (mapv #(get son-scale  %1 %1) (.toLowerCase (++ cm))) 
+(defn sm5 [comp-m [v c]]
+  (let [son-vals (mapv #(son-scale %1 %1) (.toLowerCase c)) 
         min-ix (.indexOf #+cljs (into-array son-vals) #+clj son-vals (apply min son-vals))]
-   [vm (++ (take min-ix cm)) \- (++ (drop min-ix cm))]))
+   [v (++ (take min-ix c)) \- (++ (drop min-ix c))]))
 
-(defn cluster-update [models cl]
-  (let [[vm  cm] (map ++ (split-with #(or (globals/all-vows %) (= % \*) (= % \-)) cl))]
-      (cond  (or (empty? vm) (empty? cm))
-         (++ cl)
-    :else (if (> (count cm) 1)  (reduce #(conj %1 (++ (%2 vm cm))) [] models) (++ [vm \- cm])))
-    ))
+(defn js-replace [fm v c &rest]
+  (++ [\~ (++ \| [v c]) \~]))
 
-(def cluster-update-memo (memoize cluster-update))
+(defn cluster-find [w]
+  (-- w (second concluster-pat) #+cljs js-replace #+clj #(++ [\~ (++ \| (rest %1)) \~])))
 
-(def all-vows-stress (clojure.set/union globals/all-vows #{\*}))
+(defn divide-cluster [w]
+  (str/split w #"~"))
+
+(defn vow-clusters-sep [word]
+  (-- word vowcluster-pat #(do  (++ [%1 \-]))))
+
 (defn syll-s [models w]
-  (let [lw (.toLowerCase  w)
-        orpho-word (++ [(reduce #(%2 %1) (.toLowerCase  w) [orpho-single translit]) \N])]
-  (reduce 
-    (fn [coll c] 
-      (let [
-            vow-or-stress (all-vows-stress c)
-            last-let (last (last coll))
-            coll (if (and vow-or-stress (globals/all-vows last-let)) (conj (update-in coll [(dec (count coll))] ++) \-) coll)
-            ] 
-        (do  (cond 
-               (and (globals/all-vows c) (= (last coll) [\*])) (update-in coll  [(dec (count coll))] #(conj % c)) 
-               vow-or-stress
-               (conj (if (= (last coll) \-) 
-                       coll 
-                       (update-in coll [(dec (count coll))] #(cluster-update-memo models %)))
-                     [c])
-               (= (count coll) 0) (conj coll [c])
-               (= \N  c) (update-in coll [(dec (count coll))] ++)
-               :else (update-in coll [(dec (count coll))] #(conj % c))
-                       ))))
-          [[]] (seq orpho-word))))
-
+  (let [phonw (reduce #(%2 %1) (.toLowerCase w)  [orpho-single translit])]
+  (map 
+  #(if 
+     (not= (.indexOf % "|") -1) 
+     (let [[v c] (str/split % #"\|") comp-m (++ [v c])]
+       (if 
+         (= 1 (count c))
+         (++ [v \- c])
+         (reduce 
+           (fn [a f] (conj a (++ (f comp-m [v c])))) 
+           [] 
+           models)))
+     %)
+  (divide-cluster (cluster-find (vow-clusters-sep phonw))))))
 
 (defn syll-single-sys [sys word]
   "A test function to call specific models"
 	(++ (map #(if (vector? %) (% 0) %) (syll-s [sys] word))))
   
 (defn ^:export  syll-single [word]
-  (map (fn [i] (++ (map #(if (vector? %) (% i) %) 	(syll-s [sm1 sm2 sm3 sm4 sm5] word)))) (range 5)))
-
-(partition-by #(all-vows-stress %) "*обм*орок")
-(split-with #(all-vows-stress %) "*обм*орок")
-(syll-single-sys sm3 "*обморок")
-(syll-single-sys sm3 "воНЗ*иТ")
-(syll-single-sys sm3 "пРиехала")
-(syll-single "мужск*ая")
-(syll-single "никол*аевской")
+  (map 
+    (fn [i] 
+      (++ (map 
+            #(if (vector? %) (% i) %) 
+            (syll-s [sm1 sm2 sm3 sm4 sm5] word)))) 
+    (range 5)))

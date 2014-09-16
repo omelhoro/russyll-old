@@ -21,7 +21,8 @@
                    (let [td (html-to-dom (sformat "<td class='sm%d'></td>" i))] 
                      (append! row (set-text! td w)))) paradigm)) row)))
 
-(def ru-vows (re-pattern "[`иеаоуяюыёэ]"))
+; (def ru-vows (re-pattern "[`иеаоуяюыёэ]"))
+(def ru-vows (js/RegExp. "[`иеаоуяюыёэ]" "gi"))
 ;TODO: implement warnings (stress, lemmas)
 ;TODO: options like auto stress, sampa,palat
 ;TODO: google stats
@@ -33,7 +34,12 @@
 
 (defn add-to-table [tr] (append! tab-field  tr))
 (defn set-of-vals [t]
-  (into {} (map #(vector % (syll-single %)) (set t))))
+  (into {}
+        (map 
+          #(vector % (syll-single %)) 
+          (filter 
+            #(let [ar (take 2 (re-seq ru-vows %))] (> (count ar) 1))
+            (set t)))))
 
 (defn syllaby-words [evt]
   (let [stress-sign (value inp-stress-sign)
@@ -43,13 +49,14 @@
         map-words (set-of-vals splitted-t)
         text-fn (fn [evt]
                   (let [model (value (sel "select[name='syl-model']"))]
-                  (dom/set-text! (sel "#text-of-syls") (++ (map 
+                  (dom/set-value! (sel "#text-of-syls") (++ (map 
                                                              #(let [r (map-words % %)] (if (seq? r) (nth r (int model)) r)) 
                                                              splitted-t)))))
         model-select (sel "select[name='syl-model']") 
         ]
   (if (= "" single-word)
-    (do (dorun (map 
+    (do 
+        (dorun (map 
              #(add-to-table (render-tablerow (key %) (val %))) 
              map-words))
         (listen! model-select  :click text-fn)
@@ -110,3 +117,4 @@
 ;(.send goog.net.XhrIo url callback)
 ;(ajax-json url) 
 ;(println "Hello world, du Duselkopf!")   
+

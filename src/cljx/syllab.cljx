@@ -1,7 +1,8 @@
 (ns syllab
   (:require [clojure.string :as str] 
            #+clj [clojure.data.json :as json])
-  (:use [orphoep :only [++ -- orpho-single]] 
+  (:use [ling-data :only [onset-sm4 onset-index]]
+        [orphoep :only [++ -- orpho-single]] 
         [globals :only [sformat]]
         [translit :only [translit]]))
 #+cljs (enable-console-print!)
@@ -27,11 +28,12 @@
 #+clj  (def sm4-dict (with-open [in-file (clojure.java.io/reader (clojure.java.io/resource "data/kemp_data_on_rep.json"))]
                       (doall
                         (json/read in-file)))) 
-#+cljs (def sm4-dict ; {:a {:b 1}})     
-         (let [url "/static/kemp_data_on_rep.json"
-           callback (fn [reply] (let [v (js->clj (.getResponseJson (.-target reply)))] ;v is a Clojure data structure
-                                    (do (def sm4-dict v) sm4-dict)))]
-           (.send goog.net.XhrIo url callback)))
+
+#+cljs (def sm4-dict  {:a {:b 1}})     
+         ; (let [url "/static/kemp_data_on_rep.json"
+         ;   callback (fn [reply] (let [v (js->clj (.getResponseJson (.-target reply)))] ;v is a Clojure data structure
+         ;                            (do (def sm4-dict v) sm4-dict)))]
+         ;   (.send goog.net.XhrIo url callback)))
 
 (defn sm1 [comp-m [v c]]
   (let [is-stressed (= \* (first v))]
@@ -54,15 +56,15 @@
 (defn sm4-check-concl [c o]
   (let [last-let (str (last c))
         prelast (++ (butlast c))
-        isreg (= "R" (get (get sm4-dict prelast "") last-let ""))]
-    (do  
+        value (onset-sm4 prelast)
+        isreg (if (vector? value)(= 2 (get value (onset-index last-let 99) 0)) false)]
+    (do ;(println last-let prelast value isreg (vector? value) (nth value (onset-index last-let))) 
   (if (or (= (count c) 1) isreg)
     [(++ o) \- (++ c)]
   ( sm4-check-concl (rest c) (conj o (first c)))))))
-  
+
 (defn sm4 [comp-m [v c]]
       [v (++ (sm4-check-concl c []))])
-
 
 (def son-scale
   (apply merge (map-indexed #(into {} (for [c %2] [c %1])) ["птк" "бдг" "чц" "сфшщх" "звж" "мн"  "л" "р" "й"])))
@@ -100,14 +102,14 @@
      %)
   (divide-cluster (cluster-find (vow-clusters-sep phonw))))))
 
-(defn syll-single-sys [sys word]
+(defn ^:export syll-single-sys [sys word]
   "A test function to call specific models"
 	(++ (map #(if (vector? %) (% 0) %) (syll-s [sys] word))))
   
 (defn ^:export  syll-single [word]
-  (map 
+  (mapv 
     (fn [i] 
-      (++ (map 
+      (++ (mapv
             #(if (vector? %) (% i) %) 
             (syll-s [sm1 sm2 sm3 sm4 sm5] word)))) 
     (range 5)))

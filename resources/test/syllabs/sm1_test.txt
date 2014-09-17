@@ -1,4 +1,4 @@
-%with stress and without stress (== sm3)
+%with stress and without stress (== sm3),
 *обморок,*об-мо-рок
 обморок,о-бмо-рок
 вонз*ить,во-НЗ*иТ

@@ -13,3 +13,5 @@
 %абстрактный,ап-стракт-ный isnt right accoding to algorhithm
 умбрский,умбр-сКий
 лингвист,Линг-Вист
+флёр-д’ор*анжем,фЛёр-до-р*ан-жем
+%last word, what to do with this sign?

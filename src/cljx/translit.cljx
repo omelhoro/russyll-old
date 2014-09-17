@@ -12,9 +12,9 @@
 (def j-test ["объявить" "нью" "объем"])
 
 (defn j-extract-fn [m]
-  (let [[comp cm sg vm] m
+  (let [ #+clj [comp cm sg vm] #+cljs [cm sg vm] m
         j (if (nil? vm) "" "й")]
-    (do ;(println m (= (count m) 2) (= \ь (last m)) (.toUpperCase (first m)))
+    (do 
     (cond (and (= (count m) 2) (= \ь (last m))) (.toUpperCase (first m))
           (= sg "ь") (++ [(.toUpperCase cm) j vm])
       :else (++ [cm j vm])))))

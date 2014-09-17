@@ -3,6 +3,7 @@
            #+clj [clojure.data.json :as json] 
            #+cljs [goog.net.XhrIo]
            )
+ (:use [ling-data :only [e-rep-map]])
   )
 (def stress-sign "*")
 (def -- clojure.string/replace)
@@ -18,18 +19,18 @@
 #+clj (def e-dict (with-open [in-file (clojure.java.io/reader (clojure.java.io/resource "data/e_rep.json"))]
                    (doall
                      (json/read in-file))))    
-#+cljs (def e-dict ;{:a \e}) 
-         (let [url "./static/e_rep.json"
-          callback (fn [reply] (let [v (js->clj (.getResponseJson (.-target reply))) ] ;v is a Clojure data structure
-                                 (do (def e-dict v) e-dict)))]
-          (.send goog.net.XhrIo url callback)))
+#+cljs (def e-dict {:a \e}) 
+         ; (let [url "./static/e_rep.json"
+         ;  callback (fn [reply] (let [v (js->clj (.getResponseJson (.-target reply))) ] ;v is a Clojure data structure
+         ;                         (do (def e-dict v) e-dict)))]
+         ;  (.send goog.net.XhrIo url callback)))
 
 (defn unpal-e [word & [lemma]] 
   (let [
         strd-ix (.indexOf word stress-sign) 
         word-unstrd (-- word stress-sign "")  
         lemma (if (= lemma nil ) word-unstrd lemma) 
-        patts (get e-dict lemma [])
+        patts (get e-rep-map lemma [])
         repld (reduce replace-patt word-unstrd patts)
         ]
     (if (>= strd-ix 0) (str (.substring repld 0 strd-ix) stress-sign (.substring repld strd-ix)) repld
@@ -131,16 +132,13 @@
                                  %1
 		                               (++ (reverse (deassim revd "")))))))
 
-(def reg-assim-test ["мужской" "отдых" "сбоку" "все" "творец" "сделать"])
-(map reg-assim-repl reg-assim-test)
-
 (def reg-pal-test ["здесь," "зонтик" "истинный" "все" "творец"])
-(def reg-pal-pat (re-pattern "(ст|зд|сд|нд|нч|нт|нс|нз)\\**[юеяьиё]"))
+(def reg-pal-pat (re-pattern "(ст|зд|сд|нд|нч|нт|нс|нз)(?=\\**[юеяьиё])"))
 (defn reg-pal [word]
-  (-- word reg-pal-pat #(str (first(first %1)) \ь (.substring (first %1) 1 ))))
-;(map reg-pal reg-pal-test)
-
-
+  (-- word reg-pal-pat (fn [match]
+                         (let [res #+clj (first match) #+cljs match]
+                           (do 
+                         (++ \ь res))))))
 
 (def excp-ogo (set ["дорого" "много" "строго"]))
 (def ogo-pat (re-pattern "[ео]г\\**о$"))
@@ -150,10 +148,7 @@
 (defn ogo-ovo [word]
   (let [lenght (count word)
         repfn (fn [word] (-- word ogo-pat #(-- %1 "г" "в")))
-        ]
-  (if (contains? excp-ogo word ) 
-    ;(if (and (> lenght 5) (= (.substring word (- lenght 5)) "орого"))
-    ;  (repfn word)
+        ] (if (contains? excp-ogo word ) ;(if (and (> lenght 5) (= (.substring word (- lenght 5)) "орого")) ;  (repfn word)
     ;  word)
     word
     (repfn word)))) 
@@ -164,20 +159,24 @@
   (if (or (= word "что") (= word "чт*о")) 
     (if isstressed "шт*о" "што") word)))
 
-(defn dash-rep [word] (-- word "-" ""))
+(defn dash-rep [word] (-- word #"[-’]" ""))
 
 (def rus-cons (set "лмнрцкгзвпджчшстбфщ"))
 (def dubcon-pat (re-pattern (++ ["([" (++ rus-cons) "])\\1"])))
 (defn dubcon-alg [w [m m1]]
-  (let [ix (.indexOf w m) first-l (first m) first-s (str first-l)]
+  (let [
+        m #+cljs (++ [m m1]) #+clj m
+        ix (.indexOf w m) 
+        first-l (first m) 
+        first-s (str first-l)]
     (if (= ix 0) m
       (if (= (count w) (+ ix 2)) 
         first-s
         (cond
-          (contains? rus-cons (nth w (+ ix 2))) first-s
-          (contains? (set "бвфрлг") first-l) first-s
-          (contains? (set "жтдзс") first-l) m
-          (and (>= (- ix 2) 0) (= (nth w (- ix 2)) \*) (contains? (set "кнмп") first-l)) m 
+          (rus-cons (nth w (+ ix 2))) first-s
+          ((set "бвфрлг") first-l) first-s
+          ((set "жтдзс") first-l) m
+          (and (>= (- ix 2) 0) (= (nth w (- ix 2)) \*) ((set "кнмп") first-l)) m 
           :else first-s
                      )))))
 

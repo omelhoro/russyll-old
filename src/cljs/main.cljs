@@ -1,10 +1,10 @@
 (ns main
- (:require [goog.net.XhrIo] [clojure.browser.repl :as repl] [domina :as dom])
+ (:require [goog.net.XhrIo] [text] [clojure.browser.repl :as repl] [domina :as dom])
   (:use 
     [globals :only [sformat]]
     [syllab :only [syll-single]]
     [orphoep :only [orpho-single ++ --]]
-    [translit :only [translit]]
+    ; [translit :only [translit]]
     [domina.css :only [sel]] 
     [domina.events :only [dispatch! current-target listen!]] 
     [domina :only [attr add-class! set-text! text html-to-dom append! value children text destroy-children!]]))
@@ -22,7 +22,7 @@
                      (append! row (set-text! td w)))) paradigm)) row)))
 
 ; (def ru-vows (re-pattern "[`иеаоуяюыёэ]"))
-(def ru-vows (js/RegExp. "[`иеаоуяюыёэ]" "gi"))
+(def ru-vows (js/RegExp. "[иеаоуяюыёэ]" "i"))
 ;TODO: implement warnings (stress, lemmas)
 ;TODO: options like auto stress, sampa,palat
 ;TODO: google stats
@@ -33,29 +33,19 @@
 (def sample-text (sel ".sample-text"))
 
 (defn add-to-table [tr] (append! tab-field  tr))
-(defn set-of-vals [t]
-  (into {}
-        (map 
-          #(vector % (syll-single %)) 
-          (filter 
-            #(let [ar (take 2 (re-seq ru-vows %))] (> (count ar) 1))
-            (set t)))))
 
 (defn syllaby-words [evt]
   (let [stress-sign (value inp-stress-sign)
-        regex-s (re-pattern (-- "([.,;:'\"!? ])" stress-sign ""))
         single-word (-- (value word-field) stress-sign "*")
-        splitted-t (.split (-- (value sample-text) stress-sign "*") regex-s)
-        map-words (set-of-vals splitted-t)
+        splitted-t (text/tokenize (value sample-text) stress-sign)
+        map-words (text/set-of-vals splitted-t)
         text-fn (fn [evt]
-                  (let [model (value (sel "select[name='syl-model']"))]
-                  (dom/set-value! (sel "#text-of-syls") (++ (map 
-                                                             #(let [r (map-words % %)] (if (seq? r) (nth r (int model)) r)) 
-                                                             splitted-t)))))
+                  (let [model (int (value (sel "select[name='syl-model']")))]
+                  (dom/set-value! (sel "#text-of-syls") (++ (text/text-by-model splitted-t map-words model)))))
         model-select (sel "select[name='syl-model']") 
         ]
   (if (= "" single-word)
-    (do 
+    (do (println (text/text-stats splitted-t map-words))
         (dorun (map 
              #(add-to-table (render-tablerow (key %) (val %))) 
              map-words))
@@ -67,7 +57,6 @@
   (let [childs (sel ".syll-content")]
   ( destroy-children! childs)))
 
-(js/setTimeout #(dispatch! (sel ".syllab") :click {}) 1500 )
 
 ;tabs
 (def tabs (sel "li > a"))
@@ -85,6 +74,7 @@
     (listen! (sel ".syllab") :click syllaby-words))
     (listen! (sel ".reset") :click reset)
     (listen! tabs :click tab-change)
+    (js/setTimeout #(dispatch! (sel ".syllab") :click {}) 500 )
   )
 
 (-main)

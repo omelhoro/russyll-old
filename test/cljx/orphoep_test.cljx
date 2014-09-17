@@ -1,13 +1,13 @@
 (ns orphoep_test
-  (:require [clojure.test :refer :all]
-            [clojure.data.csv :as csv]
-            [clojure.java.io :as io])
-  (:use [orphoep :only [unpal-e hard-pron cluster-assim 
+  #+clj (:require [clojure.test :as t
+                   :refer (is deftest with-test run-tests testing)]
+            )
+  #+cljs (:require-macros [cemerick.cljs.test
+                           :refer (is deftest with-test run-tests testing test-var)])
+  #+cljs (:require #+cljs [cemerick.cljs.test :as t])
+  (:use [test-data :only [orphoep-test]] [orphoep :only [unpal-e hard-pron cluster-assim 
                         end-assim reg-assim-repl reg-pal
                         ogo-ovo chto-trans dash-rep dubcon orpho-single --]]))
-(defn testset [name]
-  (with-open [in-file (io/reader (io/resource (format "test/orphoep/%s.txt" name)))]
-     (csv/read-csv (slurp  in-file))))
 
 (defn every-true [v f]
   (every? true? (map 
@@ -15,48 +15,37 @@
                     (is (= (f start) end))) v)))
 
 (deftest e-t
-  (let [d (testset "unpale_test")]
   (testing "The unpaled e"
-       (every-true d unpal-e))))
+       (every-true (orphoep-test "unpale_test") unpal-e)))
 
 (deftest hp-t
-  (let [d (testset "hard_pron_test")]
   (testing "Hard pronunciation"
-       (every-true d hard-pron))))
+       (every-true (orphoep-test "hard_pron_test") hard-pron)))
 
 (deftest endassim-t
-  (let [d (testset "endassim_test")]
   (testing "Assimilation at the end"
-       (every-true d end-assim))))
+       (every-true (orphoep-test "endassim_test") end-assim)))
 
 (deftest regassim-t
-  (let [d (testset "reg_assim_test")]
   (testing "Voice assimilation of clusters"
-       (every-true d reg-assim-repl))))
+       (every-true (orphoep-test "reg_assim_test") reg-assim-repl)))
 
 (deftest regpal-t
-  (let [d (testset "reg_pal_test")]
   (testing "Regressive palatalalization assimilation of clusters"
-       (every-true d reg-pal))))
+       (every-true (orphoep-test "reg_pal_test") reg-pal)))
 
 (deftest ogoovo-t
-  (let [d (testset "ogo_ovo_test")]
   (testing "Ogo to ovo"
-       (every-true d ogo-ovo))))
+       (every-true (orphoep-test "ogo_ovo_test") ogo-ovo)))
 
 (deftest chto-t
-  (let [d (testset "chto_test")]
   (testing "Chto to Shto replace"
-       (every-true d chto-trans))))
+       (every-true (orphoep-test "chto_test") chto-trans)))
 
 (deftest dubcon-t
-  (let [d (testset "doubcon_test")]
   (testing "Double consonants algorithm"
-       (every-true d dubcon))))
+       (every-true (orphoep-test "doubcon_test") dubcon)))
 
 (deftest all-t
-  (let [d (testset "all_orpho_test")]
   (testing "Test all together"
-       (every-true d orpho-single))))
-
-;(run-tests)
+       (every-true (orphoep-test "all_orpho_test" ) orpho-single)))

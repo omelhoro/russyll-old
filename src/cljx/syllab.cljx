@@ -14,7 +14,7 @@
                        vow-after (sformat "(?=[%s*-])" (++ globals/all-vows))
                        merged (++ [vow-bef-with non-vows vow-after])
                        ]
-(do (println merged)  
+(do   
                         [merged (re-pattern merged) ])))
 
 (def vowcluster-pat (let [
@@ -22,7 +22,7 @@
                 vow-aft (sformat "(?=\\*?[%s])" (++ globals/all-vows))
                 merged (++ [vow vow-aft])
                 ]
-                      (do (println merged)
+                      (do 
   (re-pattern merged ))))
 
 #+clj  (def sm4-dict (with-open [in-file (clojure.java.io/reader (clojure.java.io/resource "data/kemp_data_on_rep.json"))]

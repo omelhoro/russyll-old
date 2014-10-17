@@ -3,7 +3,6 @@
   ;;(:require [usertest-db :refer [test-db]])
   )
 
-(def stack-word)
 (def new-words [
             "сх*одство"
             "горш*ок"
@@ -23,9 +22,6 @@
 
             ])
 
-(def stack-of-words)
-(def stats {})
-
 (defn eval-user-input [model-db a dk]
   (let [user (val dk)
         models (model-db (key dk))]
@@ -37,7 +33,7 @@
      a
      models)))
 
-(defn calc-stats []
+(defn calc-stats [stats]
   (let [model-syls (text/set-of-vals (keys stats))
         res (reduce (partial eval-user-input model-syls) [0 0 0 0 0] stats)
         ]
@@ -45,26 +41,6 @@
     res
     ))
 
-(defn serve-words [inp]
-  (if (= inp "") 
-    (do
-      (def stack-word (first stack-of-words))
-      (def stack-of-words (rest stack-of-words))
-      stack-word)
-    (let [w (if (empty? stack-of-words) (calc-stats) (first stack-of-words))]
-      (do
-        (def stats (assoc stats stack-word inp))
-        (def stack-word w)
-        (def stack-of-words (rest stack-of-words))
-        stack-word))))
-
-(defn setup-usertest [n]
-  (do
-    (def stack-of-words (take n (shuffle (set new-words))))
-    serve-words)) 
-
-(defn setup-inputs [ws]
-  (do (def stats ws)))
-
-
-
+(defn serve-words-rand []
+  (let [randi (rand-int (count new-words))]
+    (new-words randi)))  

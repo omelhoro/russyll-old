@@ -6,7 +6,7 @@
                            :refer (is deftest with-test run-tests testing test-var)])
   #+cljs (:require #+cljs [cemerick.cljs.test :as t])
   (:use 
-   [usertest :only [setup-inputs calc-stats]
+   [usertest :only [calc-stats]
     ]
    ;; [orphoep :only [unpal-e hard-pron cluster-assim 
    ;; end-assim reg-assim-repl reg-pal
@@ -26,5 +26,5 @@
   )
 (deftest stats-t
   (testing "The correctness of stats"
-    (do (setup-inputs words) (is (= [1 1 1 4 2] (calc-stats))))
+    (do (is (= [1 1 1 4 2] (calc-stats words))))
     ))

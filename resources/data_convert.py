@@ -13,7 +13,7 @@ def parse_dir(p,n):
             print fl
             d={k:v for k,v in csv.reader(f) if not k.startswith("%")}
         return d
-    r={os.path.splitext(fl)[0]: parse_file(fl) for fl in  os.listdir(p)}
+    r={os.path.splitext(fl)[0]: parse_file(fl) for fl in  os.listdir(p) if not fl.startswith(".")}
     return format(n+"-test",r)
 
 with open("test/test_data.cljx","w+") as f:

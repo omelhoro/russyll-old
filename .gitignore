@@ -11,4 +11,5 @@ pom.xml
 .nrepl-port
 .lein-deps-sum
 .lein-repl-history
+.lein-failures
 .lein-plugins/

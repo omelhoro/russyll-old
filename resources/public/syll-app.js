@@ -1,1 +1,1 @@
-/home/igor/workspace/websyll/syll-app.js
+../../syll-app.js

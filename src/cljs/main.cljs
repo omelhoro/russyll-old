@@ -120,14 +120,6 @@
       (dorun (map #(do (dom/remove-class! % "active")) tabs-div))
       (dom/add-class! (sel href) "active"))))
 
-(def gl (atom nil))
-
-(println @gl)
-
-(reset! gl 10)
-
-(println @gl)
-
 (defn -main []
   (listen! (sel ".syllab") :click syllaby-words)
   (listen! (sel ".reset") :click reset)

@@ -36484,8 +36484,8 @@ main.syllaby_words = function syllaby_words(evt) {
   var model_select = domina.css.sel.call(null, "select[name\x3d'syl-model']");
   if (cljs.core._EQ_.call(null, "", single_word)) {
     cljs.core.dorun.call(null, cljs.core.map.call(null, function(stress_sign, single_word, splitted_t, map_words, text_fn, model_select) {
-      return function(p1__8210_SHARP_) {
-        return main.add_to_table.call(null, main.render_tablerow.call(null, cljs.core.key.call(null, p1__8210_SHARP_), cljs.core.val.call(null, p1__8210_SHARP_)));
+      return function(p1__5286_SHARP_) {
+        return main.add_to_table.call(null, main.render_tablerow.call(null, cljs.core.key.call(null, p1__5286_SHARP_), cljs.core.val.call(null, p1__5286_SHARP_)));
       };
     }(stress_sign, single_word, splitted_t, map_words, text_fn, model_select), map_words));
     domina.events.listen_BANG_.call(null, model_select, new cljs.core.Keyword(null, "click", "click", 1912301393), text_fn);
@@ -36552,8 +36552,8 @@ main.usertest_wrap = function usertest_wrap(is_sess_store, n_test) {
       if (cljs.core._EQ_.call(null, n_hist, n_test)) {
         cljs.core.println.call(null, main.udb);
         domina.append_BANG_.call(null, usert_tab, orphoep._PLUS__PLUS_.call(null, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, ["\x3ctr\x3e", cljs.core.map.call(null, function(next_input, n_hist, pg_bar, user_input_field, usert_tab, usert_but, multipl, user_input_db, word_is_avaible, len_db, update_storage_BANG_, modify_progress_bar) {
-          return function(p1__8211_SHARP_) {
-            return orphoep._PLUS__PLUS_.call(null, new cljs.core.PersistentVector(null, 6, 5, cljs.core.PersistentVector.EMPTY_NODE, ["\x3ctd\x3e", p1__8211_SHARP_, "-", 100 * (p1__8211_SHARP_ / n_test) | 0, "%", "\x3c/td\x3e"], null));
+          return function(p1__5287_SHARP_) {
+            return orphoep._PLUS__PLUS_.call(null, new cljs.core.PersistentVector(null, 6, 5, cljs.core.PersistentVector.EMPTY_NODE, ["\x3ctd\x3e", p1__5287_SHARP_, "-", 100 * (p1__5287_SHARP_ / n_test) | 0, "%", "\x3c/td\x3e"], null));
           };
         }(next_input, n_hist, pg_bar, user_input_field, usert_tab, usert_but, multipl, user_input_db, word_is_avaible, len_db, update_storage_BANG_, modify_progress_bar), usertest.calc_stats.call(null, main.udb)), "\x3c/tr\x3e"], null)));
         return domina.set_attr_BANG_.call(null, usert_but, "disabled", "true");
@@ -36573,8 +36573,8 @@ main.usertest_wrap = function usertest_wrap(is_sess_store, n_test) {
     return function(evt) {
       var user_inp = domina.value.call(null, user_input_field);
       if (cljs.core._EQ_.call(null, user_inp, "") || cljs.core._EQ_.call(null, 1, cljs.core.count.call(null, cljs.core.filter.call(null, function(user_inp, pg_bar, user_input_field, usert_tab, usert_but, multipl, user_input_db, word_is_avaible, len_db, update_storage_BANG_, modify_progress_bar, usertest_proceed, usertest_error) {
-        return function(p1__8212_SHARP_) {
-          return cljs.core._EQ_.call(null, "-", p1__8212_SHARP_);
+        return function(p1__5288_SHARP_) {
+          return cljs.core._EQ_.call(null, "-", p1__5288_SHARP_);
         };
       }(user_inp, pg_bar, user_input_field, usert_tab, usert_but, multipl, user_input_db, word_is_avaible, len_db, update_storage_BANG_, modify_progress_bar, usertest_proceed, usertest_error), user_inp)))) {
         update_storage_BANG_.call(null, user_inp);
@@ -36592,14 +36592,14 @@ main.tabs_div = domina.nodes.call(null, domina.css.sel.call(null, ".tab-content 
 main.tab_change = function tab_change(evt) {
   var href = domina.attr.call(null, domina.events.current_target.call(null, evt), "href");
   cljs.core.dorun.call(null, cljs.core.map.call(null, function(href) {
-    return function(p1__8213_SHARP_) {
-      return domina.remove_class_BANG_.call(null, p1__8213_SHARP_.parentNode, "active");
+    return function(p1__5289_SHARP_) {
+      return domina.remove_class_BANG_.call(null, p1__5289_SHARP_.parentNode, "active");
     };
   }(href), domina.nodes.call(null, main.tabs)));
   domina.add_class_BANG_.call(null, domina.events.current_target.call(null, evt).parentNode, "active");
   cljs.core.dorun.call(null, cljs.core.map.call(null, function(href) {
-    return function(p1__8214_SHARP_) {
-      return domina.remove_class_BANG_.call(null, p1__8214_SHARP_, "active");
+    return function(p1__5290_SHARP_) {
+      return domina.remove_class_BANG_.call(null, p1__5290_SHARP_, "active");
     };
   }(href), main.tabs_div));
   return domina.add_class_BANG_.call(null, domina.css.sel.call(null, href), "active");

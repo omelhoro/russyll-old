@@ -2,13 +2,13 @@
   (:require [goog.net.XhrIo ]
             [text ]
             [goog.storage.mechanism.HTML5SessionStorage :as html5ss]
-            ;[clojure.browser.repl :as repl]
- [domina :as dom])
+            [reagent.core :as r]
+            [domina :as dom])
   (:use [globals :only [sformat]]
         [syllab :only [syll-single]]
         [orphoep :only [orpho-single ++ --]]
         ; [translit :only [translit]]
- [usertest :only [setup-usertest serve-words-rand calc-stats]]
+ [usertest :only [serve-words-rand calc-stats]]
         [domina.css :only [sel]]
         [domina.events :only [dispatch! current-target listen!]]
         [domina :only [attr add-class! set-text! text html-to-dom append! value children text destroy-children!]]))

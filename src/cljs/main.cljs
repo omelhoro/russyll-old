@@ -24,7 +24,6 @@
           paradigm))
       row)))
 
-; (def ru-vows (re-pattern \"[`иеаоуяюыёэ]\"))
 (def ru-vows (js/RegExp. "[иеаоуяюыёэ]" "i"))
 
 ;TODO: implement warnings (stress, lemmas)
@@ -59,13 +58,6 @@
 
 (defn reset [evt] (let [childs (sel ".syll-content")] (destroy-children! childs)))
 
-;usertest
-;(def storage (goog.storage.mechanism.HTML5SessionStorage.))
-;(.clear storage)
-;(.set storage \"a\" \"b\")
-;(println (for [[k v] storage] v))
-;(println (keys (.get storage :usertest)))
-;(println (cljs.reader/read-string (.get storage :usertest)))
 (def udb {})
 
 (defn usertest-wrap [is-sess-store n-test]
@@ -116,51 +108,6 @@
                                  (usertest-error user-inp))))]
     (do (usertest-proceed "") usertest-val-input)))
 
-;; (defn usertest [ev]
-;;   (let [user-input (value (sel \"input.usertest\"))
-;;         next-input (serve-words user-input)
-;;         history (.get storage :usertest)
-;;         n-hist (count history)]
-;;     (if (= n-hist n-test) ;means end stats
-;;       (do (append! (sel \".syll-of-user\")
-;;                    (++ [\"<tr>\"
-;;                         (map
-;;                          #(++ [\"<td>\" %1 \"-\" (int (* 100(/ %1 n-test))) \"%\" \"</td>\"])
-;;                          next-input)
-;;                         \"</tr>\"]))
-;;           (dom/set-attr! (sel \"button.usertest\") \"disabled\" \"true\"))
-;;       (do
-;;         (modify-progress-bar! n-hist pg-bar)
-;;         (dom/set-value! (sel \"input.usertest\") next-input)))
-;;     )
-;;   )
-;; (defn modify-progress-bar! []
-;;   (let [curval (js/parseInt (dom/attr pg-bar \"aria-valuenow\"))
-;;         newval (+ curval (/ 100 n-test))]
-;;     (do
-;;       (dom/set-attr! pg-bar \"aria-valuenow\" newval)
-;;       (dom/set-style! pg-bar \"width\" (str newval \"%\"))
-;;       )
-;;     )
-;;   )
-;; (defn usertest [evt]
-;;   (let [user-input (value (sel \"input.usertest\"))
-;;         next-input (serve-words user-input)
-;; ]
-;;     (if (vector? next-input) ;means end stats
-;;       (do (append! (sel \".syll-of-user\")
-;;                    (++ [\"<tr>\"
-;;                         (map
-;;                          #(++ [\"<td>\" %1 \"-\" (int (* 100(/ %1 n-test))) \"%\" \"</td>\"])
-;;                          next-input)
-;;                         \"</tr>\"]))
-;;           (dom/set-attr! (sel \"button.usertest\") \"disabled\" \"true\"))
-;;       (do
-;;         (modify-progress-bar!)
-;;         (dom/set-value! (sel \"input.usertest\") next-input)))
-;;     )
-;;   )
-;tabs
 (def tabs (sel "li > a"))
 
 (def tabs-div (dom/nodes (sel ".tab-content > div")))
@@ -189,28 +136,3 @@
   (listen! tabs :click tab-change))
 
 (-main)
-
-;(println (.split foos (re-pattern \" \")))
-;(dorun (map #(add-to-table (syllaby %)) (filter not-empty (.split foos #\"[.,;:'\\\"!?\\n ]\"))))
-;(js/setTimeout #(-main) 150)
-;(println (str (syll-single \"лондонский\")))
-;(def t (text (sel \"button\")))
-;(defn xhr-connection
-;  \"Returns an XhrIo connection\"
-;  []
-;  (goog.net.XhrIo.))
-;(println sm4-dict)
-;(println (.send (goog.net.XhrIo.)))
-;(def xhr (xhr-connection))
-;(defn my [reply]
-;   reply)
-;(defn ajax-json [url]
-;   (.send net url my))
-;(def url \"https://github.com/omelhoro/myFlaskSite/blob/master/static/data/excsApp.json\")
-;(def url \"http://ip.jsontest.com/\")
-;(defn callback [reply]
-;    (let [v (js->clj (.getResponseJson (.-target reply)))] ;v is a Clojure data structure
-;        (println v)))
-;(.send goog.net.XhrIo url callback)
-;(ajax-json url)
-;(println \"Hello world, du Duselkopf!\")

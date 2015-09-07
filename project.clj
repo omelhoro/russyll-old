@@ -6,7 +6,7 @@
   :url
   "http://example.com/FIXME"
   :dependencies
-  [[org.clojure/clojure "1.6.0"]
+  [[org.clojure/clojure "1.7.0"]
    [org.clojure/data.json "0.2.5"]
    [org.clojure/data.csv "0.1.2"]
    [org.clojure/data.xml "0.0.8"]
@@ -32,9 +32,9 @@
    :cljs
    {:source-paths ["src/misc/"],
     :ring {:handler rooter/handler},
-    :dependencies [[org.clojure/clojurescript "0.0-2268"] [compojure "1.1.6"] [domina "1.0.2"]],
+    :dependencies [[org.clojure/clojurescript "1.7.48"] [compojure "1.1.6"] [domina "1.0.2"] [reagent "0.5.1-rc3"]],
     :test-paths ["test/cljs" "target/test-classes/cljs"],
-    :plugins [[com.cemerick/clojurescript.test "0.3.1"] [lein-cljsbuild "1.0.3"] [lein-ring "0.8.8"]]}}
+    :plugins [[com.cemerick/clojurescript.test "0.3.1"] [lein-cljsbuild "1.1.0"] [lein-ring "0.8.8"]]}}
   :aliases
   {"clj-test" ["with-profile" "clj" "test"],
    "clj-build" ["with-profile" "clj" "uberjar"],
@@ -47,11 +47,12 @@
      :source-paths ["src/cljs" "target/classes/cljs"],
      :compiler
      {:output-to "syll-app.js",
-      :output-dir "static/syllable/out",
-      :optimizations :whitespace,
+      :output-dir "resources/public/js",
+      :optimizations :none,
       :source-map "syll-app.js.map"}}
-    {:source-paths ["target/test-classes/cljs/"],
-     :compiler {:output-to "target/cljs/simple.js", :optimizations :simple, :pretty-print true}}],
+    ; {:source-paths ["target/test-classes/cljs/"],
+    ;  :compiler {:output-to "target/cljs/simple.js", :optimizations :simple, :pretty-print true}}
+     ],
    :test-commands {"unittests" ["phantomjs" :runner "this.literal_js_was_evaluated=true" "target/cljs/simple.js"]}}
   :cljx
   {:builds

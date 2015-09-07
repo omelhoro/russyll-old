@@ -120,7 +120,57 @@
       (dorun (map #(do (dom/remove-class! % "active")) tabs-div))
       (dom/add-class! (sel href) "active"))))
 
+(def user-history (r/atom {}))
+
+(def user-progress (r/atom (str 0 "%")))
+
+(def result (r/atom [0 0 0 0 0]))
+
+(def how-many 2)
+
+(defn choose-word []
+  (let [choice (serve-words-rand)]
+    (if (contains? @user-history choice) (choose-word) (do (swap! user-history assoc choice choice) choice))))
+
+(def current-word (r/atom (choose-word)))
+
+(defn progress-tab []
+  [:div.progress
+   {:style {:margin-top "10px"}}
+   [:div.progress-bar.progress-bar-success {:style {:width @user-progress}}]])
+
+(defn next-test []
+  (let [input @current-word n-of-separations (count (filter #(= \- %) input)) k (clojure.string/replace input "-" "")]
+    (if (= n-of-separations 1)
+      (do
+        (swap! user-history assoc k input)
+        (swap! user-progress #(-> (count @user-history) (* (/ 100 how-many)) (str "%")))
+        (print @user-history)
+        (if (-> (count @user-history) (= how-many))
+          (swap! result #(calc-stats @user-history))
+          (swap! current-word choose-word)))
+      (js/alert "Please set a dash to separate syllables!"))))
+
+(defn tab1 []
+  [:div.tab-pane.col-lg-6
+   (progress-tab)
+   [:p "Here you can check yourself: Which model follows your intution?"]
+   [:p
+    "Set the division with a dash '-': 'игорь' -> 'и-горь'. There will be 10 words to divide."
+    [:strong "Important"]
+    [:div.input-group
+     [:input.form-control {:value @current-word, :on-change #(reset! current-word (-> % .-target .-value))}]
+     [:div.input-group-btn
+      [:button.btn.btn-default {:on-click #(next-test)} (if (-> (count @user-history) (= how-many)) "Result" "Next")]]]
+    [:ul.list-group
+     {:style {:margin-top "10px"}}
+     (for [[k v] @user-history] ^{:key (:id v)} [:li.list-group-item (str k " -> " v)])]]
+   [:table.table [:tr (for [i (range 1 6)] [:th (str "SM " i)])] [:tr (for [v @result] [:td v])]]])
+
+(defn render-simple [] (r/render-component [tab1] (.querySelector js/document "#check-yourself")))
+
 (defn -main []
+  (render-simple)
   (listen! (sel ".syllab") :click syllaby-words)
   (listen! (sel ".reset") :click reset)
   (listen! (sel "button.usertest") :click (usertest-wrap false 10))

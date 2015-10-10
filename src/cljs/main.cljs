@@ -1,7 +1,6 @@
 (ns main
   (:require [goog.net.XhrIo]
             [text]
-            [goog.storage.mechanism.HTML5SessionStorage :as html5ss]
             [reagent.core :as r]
             [domina :as dom])
   (:use [globals :only [sformat]]
@@ -166,7 +165,7 @@
          {:style {:margin-top "10px"}}
          (for [[k v] @user-history]
               ^{:key (:id v)}
-              [:li.list-group-item (str k " -> " v)] [:div {:igor "fischer"}])]]
+              [:li.list-group-item (str k " -> " v)])]]
        [:table.table [:tr (for [i (range 1 6)] [:th (str "SM " i)])] [:tr (for [v @result] [:td v])]]])
 
 (defn render-simple [] (r/render-component [tab1] (.querySelector js/document "#check-yourself")))

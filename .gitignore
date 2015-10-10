@@ -7,7 +7,10 @@ pom.xml
 /out/
 /static/syllable/out/
 /bin/
-/target/
+/target/classes
+/target/stale
+/target/test-classes
+/target/*SNAPSHOT.jar
 .nrepl-port
 .lein-deps-sum
 .lein-repl-history

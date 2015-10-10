@@ -1,5 +1,5 @@
 (defproject
-  websyll
+  russyll
   "0.1.0-SNAPSHOT"
   :description
   "FIXME: write this!"
@@ -22,37 +22,36 @@
   :profiles
   {:dev
    {:dependencies
-    [;[org.clojure/clojurescript \"0.0-2268\"]
-     ; [domina \"1.0.2\"]
-     ;[compojure \"1.1.6\"]
-],
+             [;[org.clojure/clojurescript \"0.0-2268\"]
+              ; [domina \"1.0.2\"]
+              ;[compojure \"1.1.6\"]
+              ],
     :plugins [[com.keminglabs/cljx "0.4.0" :exclusions [org.clojure/clojure]]],
-    :hooks [cljx.hooks],
-    :ring {:handler rooter/handler}},
+    :hooks   [cljx.hooks],
+    :ring    {:handler rooter/handler}},
    :cljs
    {:source-paths ["src/misc/"],
-    :ring {:handler rooter/handler},
+    :ring         {:handler rooter/handler},
     :dependencies [[org.clojure/clojurescript "1.7.48"] [compojure "1.1.6"] [domina "1.0.2"] [reagent "0.5.1-rc3"]],
-    :test-paths ["test/cljs" "target/test-classes/cljs"],
-    :plugins [[com.cemerick/clojurescript.test "0.3.1"] [lein-cljsbuild "1.1.0"] [lein-ring "0.8.8"]]}}
+    :test-paths   ["test/cljs" "target/test-classes/cljs"],
+    :plugins      [[com.cemerick/clojurescript.test "0.3.1"] [lein-cljsbuild "1.1.0"] [lein-ring "0.8.8"]]}}
   :aliases
-  {"clj-test" ["with-profile" "clj" "test"],
-   "clj-build" ["with-profile" "clj" "uberjar"],
+  {"clj-test"   ["with-profile" "clj" "test"],
+   "clj-build"  ["with-profile" "clj" "uberjar"],
    "cljs-build" ["with-profile" "cljs" "cljsbuild" "auto"],
-   "cljs-test" ["with-profile" "cljs" "cljsbuild" "test"],
+   "cljs-test"  ["with-profile" "cljs" "cljsbuild" "test"],
    "cljs-serve" ["with-profile" "cljs" "ring" "server"]}
   :cljsbuild
   {:builds
-   [{:id "syll-app",
-     :source-paths ["src/cljs" "target/classes/cljs"],
-     :compiler
-     {:output-to "syll-app.js",
-      :output-dir "resources/public/js",
-      :optimizations :none,
-      :source-map "syll-app.js.map"}}
-    ; {:source-paths ["target/test-classes/cljs/"],
-    ;  :compiler {:output-to "target/cljs/simple.js", :optimizations :simple, :pretty-print true}}
-     ],
+                  [{:id           "syll-app",
+                    :source-paths ["src/cljs" "target/classes/cljs"],
+                    :compiler
+                                  {:output-to     "resources/public/js/syll-app.js",
+                                   :optimizations :none,
+                                   :source-map    "syll-app.js.map"}}
+                   ; {:source-paths ["target/test-classes/cljs/"],
+                   ;  :compiler {:output-to "target/cljs/simple.js", :optimizations :simple, :pretty-print true}}
+                   ],
    :test-commands {"unittests" ["phantomjs" :runner "this.literal_js_was_evaluated=true" "target/cljs/simple.js"]}}
   :cljx
   {:builds

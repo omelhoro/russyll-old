@@ -46,7 +46,7 @@
                   [{:id           "syll-app",
                     :source-paths ["src/cljs" "target/classes/cljs"],
                     :compiler
-                                  {:output-to     "resources/public/js/syll-app.js",
+                                  {:output-to     "resources/public/js/russyll.js",
                                    :optimizations :none,
                                    :source-map    "syll-app.js.map"}}
                    ; {:source-paths ["target/test-classes/cljs/"],

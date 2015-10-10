@@ -1,7 +1,7 @@
 # ~/.tmuxinator/websyll.yml
 
 name: websyll
-root: ~/workspace/private/clojure/websyll
+root: ~/workspace/private/russyll
 
 # Optional tmux socket
 # socket_name: foo
@@ -37,5 +37,4 @@ windows:
   - server:
       layout: even-horizontal
       panes:
-        - cd ../pretty-print.net/pp-jvm-server && lein ring server
         -

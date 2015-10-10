@@ -45,7 +45,7 @@
    "cljs-test"  ["with-profile" "cljs" "cljsbuild" "test"],
    "cljs-serve" ["ring" "server-headless"]}
   :cljsbuild
-  {:builds
+  {:builds 
                   [{:id           "syll-app",
                     :source-paths ["src/cljs" "target/classes/cljs"],
                     :compiler

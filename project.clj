@@ -36,7 +36,7 @@
    {:source-paths ["src/misc/"],
     :ring         {:handler rooter :port 5000},
     :dependencies [[org.clojure/clojurescript "1.7.48"] [compojure "1.1.6"] [domina "1.0.2"] [reagent "0.5.1-rc3"]],
-    :test-paths   ["test/cljs" "target/test-classes/cljs"],
+    :test-paths    ["test/cljs" "target/test-classes/cljs"],
     :plugins      [[com.cemerick/clojurescript.test "0.3.1"] [lein-cljsbuild "1.1.0"] [lein-ring "0.8.8"]]}}
   :aliases
   {"clj-test"   ["with-profile" "clj" "test"],

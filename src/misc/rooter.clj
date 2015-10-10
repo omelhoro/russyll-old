@@ -24,4 +24,4 @@
 
 ;; Pass the handler to Jetty on port 8080
 (defn -main []
-      (run-jetty handler {:port 5002}))
+      (run-jetty handler {:port 5000}))

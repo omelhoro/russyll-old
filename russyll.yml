@@ -33,7 +33,6 @@ windows:
       panes:
         - lein cljs-serve
         - lein cljs-build
-        - lein
   - server:
       layout: even-horizontal
       panes:

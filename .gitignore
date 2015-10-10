@@ -1,6 +1,5 @@
 *.swp
 pom.xml
-*jar
 *map
 /lib/
 /classes/
@@ -11,6 +10,7 @@ pom.xml
 /target/stale
 /target/test-classes
 /target/*SNAPSHOT.jar
+/target/*-compiler-*
 .nrepl-port
 .lein-deps-sum
 .lein-repl-history

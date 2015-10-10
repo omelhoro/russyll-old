@@ -30,11 +30,11 @@
               ],
     :plugins [[com.keminglabs/cljx "0.4.0" :exclusions [org.clojure/clojure]] [lein-ring "0.8.8"]],
     :hooks   [cljx.hooks],
-    :ring    {:handler rooter/handler}}
+    :ring    {:handler rooter/handler :port 5000}}
    ,
    :cljs
    {:source-paths ["src/misc/"],
-    :ring         {:handler rooter/handler :port 5002},
+    :ring         {:handler rooter :port 5000},
     :dependencies [[org.clojure/clojurescript "1.7.48"] [compojure "1.1.6"] [domina "1.0.2"] [reagent "0.5.1-rc3"]],
     :test-paths   ["test/cljs" "target/test-classes/cljs"],
     :plugins      [[com.cemerick/clojurescript.test "0.3.1"] [lein-cljsbuild "1.1.0"] [lein-ring "0.8.8"]]}}
@@ -43,7 +43,7 @@
    "clj-build"  ["with-profile" "clj" "uberjar"],
    "cljs-build" ["with-profile" "cljs" "cljsbuild" "auto"],
    "cljs-test"  ["with-profile" "cljs" "cljsbuild" "test"],
-   "cljs-serve" ["with-profile" "cljs" "ring" "server-headless"]}
+   "cljs-serve" ["ring" "server-headless"]}
   :cljsbuild
   {:builds
                   [{:id           "syll-app",

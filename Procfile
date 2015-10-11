@@ -1,1 +1,1 @@
-web: java -jar app-standalone.jar
+web: java -jar target/app-standalone.jar

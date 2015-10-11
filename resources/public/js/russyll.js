@@ -1,13 +1,14 @@
 goog.addDependency("base.js", ['goog'], []);
 goog.addDependency("../cljs/core.js", ['cljs.core'], ['goog.string', 'goog.object', 'goog.string.StringBuffer', 'goog.array']);
+goog.addDependency("../clojure/set.js", ['clojure.set'], ['cljs.core']);
+goog.addDependency("../globals.js", ['globals'], ['goog.string', 'cljs.core', 'clojure.set', 'goog.string.format']);
 goog.addDependency("../clojure/string.js", ['clojure.string'], ['goog.string', 'cljs.core', 'goog.string.StringBuffer']);
 goog.addDependency("../ling_data.js", ['ling_data'], ['cljs.core']);
 goog.addDependency("../orphoep.js", ['orphoep'], ['cljs.core', 'clojure.string', 'ling_data']);
-goog.addDependency("../reagent/debug.js", ['reagent.debug'], ['cljs.core']);
-goog.addDependency("../clojure/set.js", ['clojure.set'], ['cljs.core']);
-goog.addDependency("../react.inc.js", ['cljsjs.react'], []);
-goog.addDependency("../globals.js", ['globals'], ['goog.string', 'cljs.core', 'clojure.set', 'goog.string.format']);
 goog.addDependency("../translit.js", ['translit'], ['globals', 'cljs.core', 'orphoep']);
+goog.addDependency("../syllab.js", ['syllab'], ['globals', 'cljs.core', 'orphoep', 'translit', 'clojure.string', 'ling_data']);
+goog.addDependency("../reagent/debug.js", ['reagent.debug'], ['cljs.core']);
+goog.addDependency("../react.inc.js", ['cljsjs.react'], []);
 goog.addDependency("../domina/support.js", ['domina.support'], ['goog.dom', 'cljs.core', 'goog.events']);
 goog.addDependency("../domina.js", ['domina'], ['goog.dom.forms', 'goog.dom', 'goog.dom.classes', 'goog.string', 'cljs.core', 'domina.support', 'goog.style', 'clojure.string', 'goog.events', 'goog.dom.xml']);
 goog.addDependency("../domina/css.js", ['domina.css'], ['goog.dom', 'cljs.core', 'domina', 'goog.dom.query']);
@@ -18,7 +19,6 @@ goog.addDependency("../reagent/impl/batching.js", ['reagent.impl.batching'], ['r
 goog.addDependency("../reagent/impl/component.js", ['reagent.impl.component'], ['reagent.impl.util', 'reagent.interop', 'reagent.ratom', 'cljs.core', 'reagent.impl.batching', 'reagent.debug']);
 goog.addDependency("../reagent/impl/template.js", ['reagent.impl.template'], ['reagent.impl.util', 'reagent.interop', 'reagent.ratom', 'cljs.core', 'reagent.impl.batching', 'reagent.impl.component', 'reagent.debug', 'clojure.string']);
 goog.addDependency("../reagent/core.js", ['reagent.core'], ['reagent.impl.util', 'reagent.interop', 'reagent.ratom', 'cljs.core', 'cljsjs.react', 'reagent.impl.template', 'reagent.impl.batching', 'reagent.impl.component', 'reagent.debug']);
-goog.addDependency("../syllab.js", ['syllab'], ['globals', 'cljs.core', 'orphoep', 'translit', 'clojure.string', 'ling_data']);
 goog.addDependency("../text.js", ['text'], ['globals', 'cljs.core', 'orphoep', 'translit', 'syllab', 'clojure.string']);
 goog.addDependency("../domina/events.js", ['domina.events'], ['cljs.core', 'domina', 'goog.object', 'goog.events']);
 goog.addDependency("../usertest.js", ['usertest'], ['text', 'cljs.core']);

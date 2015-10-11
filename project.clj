@@ -21,6 +21,8 @@
   rooter
   :aot
   :all
+  :uberjar-name
+  "app-standalone.jar"
   :profiles
   {:dev
    {:dependencies
